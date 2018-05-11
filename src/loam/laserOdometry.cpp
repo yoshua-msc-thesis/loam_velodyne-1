@@ -685,7 +685,7 @@ void laserOdometry::main_laserOdometry(sensor_msgs::PointCloud2 &pub, nav_msgs::
                            + s*ty*crz*srx - s*tz*crx - s*tx*srx*srz) * coeff.y
                         + (s*crx*cry*srz*extreOri.x - s*crx*cry*crz*extreOri.y - s*cry*srx*extreOri.z
                            + s*tz*cry*srx + s*ty*crx*cry*crz - s*tx*crx*cry*srz) * coeff.z;
-                if (isnan(arx) || isnan(-arx))
+                if (std::isnan(arx) || std::isnan(-arx))
                     ROS_ERROR ("arx=%f, s=%f, crx=%f, sry=%f, srz=%f, extreOri.x=%f, extreOri.y=%f, extreOri.z=%f, coeff.x=%f, coeff.y=%f, coeff.z=%f", arx, s, crx, sry, srz, extreOri.x, extreOri.y, extreOri.z, coeff.x, coeff.y, coeff.z);
 
                 float ary = ((-s*crz*sry - s*cry*srx*srz)*extreOri.x
@@ -727,7 +727,7 @@ void laserOdometry::main_laserOdometry(sensor_msgs::PointCloud2 &pub, nav_msgs::
                 //                          << ", atx=" << atx
                 //                          << ", aty=" << aty
                 //                          << ", atz=" << atz << std::endl;
-                if(isnan(matB.at<float>(i, 0)) || isnan(-matB.at<float>(i, 0)))
+                if(std::isnan(matB.at<float>(i, 0)) || std::isnan(-matB.at<float>(i, 0)))
                     ROS_ERROR ("matB.at<float>(i, 0)=%f",  matB.at<float>(i, 0));
             }
             cv::transpose(matA, matAt);
@@ -1031,7 +1031,7 @@ int laserOdometry::processEdgePoint(pcl::KdTreeFLANN<pcl::PointXYZHSV>::Ptr kdtr
             //laserCloudSel->push_back(tripod1);
             //laserCloudSel->push_back(tripod2);
             //laserCloudSel->push_back(tripod3);
-            if (isnan(coeff.x) || isnan(coeff.y) || isnan(coeff.z) || isnan(coeff.h))
+            if (std::isnan(coeff.x) || std::isnan(coeff.y) || std::isnan(coeff.z) || std::isnan(coeff.h))
             {
                 std::cout << "s=" << s
                           << ", pa=" << pa
@@ -1134,14 +1134,14 @@ int laserOdometry::processPlanarPoint(pcl::KdTreeFLANN<pcl::PointXYZHSV>::Ptr kd
                           * ((y0 - y1)*(z0 - z2) - (y0 - y2)*(z0 - z1)));
         if (a012>0.001f)
         {
-            if (isnan(a012) || isnan(-a012))
+            if (std::isnan(a012) || std::isnan(-a012))
                 std::cerr << "a012=" << a012 << std::endl;
 
             float l12 = sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2) + (z1 - z2)*(z1 - z2));
-            if (isnan(l12) || isnan(-l12))
+            if (std::isnan(l12) || std::isnan(-l12))
                 std::cerr << "l12=" << l12 << std::endl;
             float la = ((y1 - y2)*((x0 - x1)*(y0 - y2) - (x0 - x2)*(y0 - y1)) + (z1 - z2)*((x0 - x1)*(z0 - z2) - (x0 - x2)*(z0 - z1))) / a012 / l12;
-            if (isnan(la) || isnan(-la))
+            if (std::isnan(la) || std::isnan(-la))
                 std::cerr << "la=" << la << ", a012=" << a012 << ", l12=" << l12 << std::endl;
             float lb = -((x1 - x2)*((x0 - x1)*(y0 - y2) - (x0 - x2)*(y0 - y1))  - (z1 - z2)*((y0 - y1)*(z0 - z2) - (y0 - y2)*(z0 - z1))) / a012 / l12;
             float lc = -((x1 - x2)*((x0 - x1)*(z0 - z2) - (x0 - x2)*(z0 - z1))  + (y1 - y2)*((y0 - y1)*(z0 - z2) - (y0 - y2)*(z0 - z1))) / a012 / l12;
@@ -1167,7 +1167,7 @@ int laserOdometry::processPlanarPoint(pcl::KdTreeFLANN<pcl::PointXYZHSV>::Ptr kd
                 //laserCloudExtreProj->push_back(extreProj);
                 //laserCloudSel->push_back(tripod1);
                 //laserCloudSel->push_back(tripod2);
-                if (isnan(coeff.x) || isnan(coeff.y) || isnan(coeff.z) || isnan(coeff.h))
+                if (std::isnan(coeff.x) || std::isnan(coeff.y) || std::isnan(coeff.z) || std::isnan(coeff.h))
                 {
                     std::cout << "s=" << s
                               << ", la=" << la

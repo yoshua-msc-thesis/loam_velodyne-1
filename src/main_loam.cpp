@@ -30,7 +30,10 @@ int main( int argc, char** argv )
 
     // get data from rosbag file
     rosbag::Bag bag;
-    bag.open("/home/sebastian/Dropbox/aria/Zhang_data_for_loam/robot_city_bridge/robot_city_bridge.bag", rosbag::bagmode::Read);
+    std::string file_path;
+    file_path = "/home/sebastian/Dropbox/aria/Zhang_data_for_loam/robot_city_bridge/robot_city_bridge.bag";
+    file_path = "/home/alfredoso/Datasets/LOAM/robot_city_bridge.bag";
+    bag.open(file_path, rosbag::bagmode::Read);
 
     std::vector<std::string> topics;
     topics.push_back(std::string("/sync_scan_cloud_filtered"));

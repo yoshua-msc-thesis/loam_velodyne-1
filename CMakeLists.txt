@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.7)
-project(loam_velodyne)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+project(loam_velodyne_adrelino)
+# include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 # Set the build type.  Options are:
 #  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
@@ -10,14 +10,22 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
 set(ROS_BUILD_TYPE Release)
 
+find_package(catkin REQUIRED COMPONENTS
+  cmake_modules
+  roscpp
+  eigen_conversions
+  pcl_catkin
+  rospy
+  std_msgs
+  tf
+  rosbag
+)
 
-rosbuild_init() 
+# rosbuild_init() 
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_MODULE_PATH   ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
-find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs)
-find_package(Eigen3 REQUIRED)
 
 # don't use opencv as found by any prior running of find_package
 unset(OpenCV_CONFIG_PATH CACHE)
@@ -36,21 +44,25 @@ unset(OpenCV_DIR CACHE)
 
 find_package(Ceres 1.2.3 REQUIRED)
 include_directories(${CERES_INCLUDE_DIRS})
-find_package(PCL 1.7 REQUIRED)
-include_directories(${PCL_INCLUDE_DIRS})
-link_directories(${PCL_LIBRARY_DIRS})
+
 
 # Messages & Services
-rosbuild_genmsg()
+catkin_package(
+  CATKIN_DEPENDS pcl_catkin roscpp rospy std_msgs tf rosbag
+  LIBRARIES ${PROJECT_NAME}
+  DEPENDS EIGEN
+)
+
+# rosbuild_genmsg()
 
 
-add_definitions(${PCL_DEFINITIONS})
+# add_definitions(${PCL_DEFINITIONS})
 
 
 # SSE flags
-rosbuild_check_for_sse()
-#add_definitions("-DUSE_ROS")
-#add_definitions("-DENABLE_SSE")
+# rosbuild_check_for_sse()
+# add_definitions("-DUSE_ROS")
+add_definitions("-DENABLE_SSE")
 
 # Also add some useful compiler flag
 set(CMAKE_CXX_FLAGS
@@ -59,18 +71,18 @@ set(CMAKE_CXX_FLAGS
 
 # Set source files
 set(loam_SOURCE_FILES
-${PROJECT_SOURCE_DIR}/src/loam/scanRegistration.cpp
-${PROJECT_SOURCE_DIR}/src/loam/laserOdometry.cpp
-${PROJECT_SOURCE_DIR}/src/loam/laserMapping.cpp
-${PROJECT_SOURCE_DIR}/src/loam/transformMaintenance.cpp
-${PROJECT_SOURCE_DIR}/src/loam/loam_wrapper.cpp
-${PROJECT_SOURCE_DIR}/src/loam/icp.cpp
+  src/loam/scanRegistration.cpp
+  src/loam/laserOdometry.cpp
+  src/loam/laserMapping.cpp
+  src/loam/transformMaintenance.cpp
+  src/loam/loam_wrapper.cpp
+  src/loam/icp.cpp
 )
 
 set(util_SOURCE_FILES
-${PROJECT_SOURCE_DIR}/src/KITTI_util/KITTI.cpp
-${PROJECT_SOURCE_DIR}/src/KITTI_util/toMATLAB.cpp
-${PROJECT_SOURCE_DIR}/src/util/matrix.cpp
+  src/KITTI_util/KITTI.cpp
+  src/KITTI_util/toMATLAB.cpp
+  src/util/matrix.cpp
 )
 set(SOURCE_FILES
   ${loam_SOURCE_FILES}
@@ -79,8 +91,6 @@ set(SOURCE_FILES
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  ${PCL_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIR}
   ${OpenCV_INCLUDE_DIRS}
 )
 
@@ -88,29 +98,29 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
 
 # build shared library.
-rosbuild_add_library(loam SHARED ${SOURCE_FILES})
-target_link_libraries(loam ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBS})
+add_library(loam SHARED ${SOURCE_FILES})
+target_link_libraries(loam ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 
 
 # build to file
-#rosbuild_add_executable(main_loam src/main_loam.cpp)
-#target_link_libraries(main_loam loam ${PCL_LIBRARIES} ${OpenCV_LIBRARIES})
+add_executable(main_loam src/main_loam.cpp)
+target_link_libraries(main_loam loam ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
-#rosbuild_add_executable(main_KITTI ${catkin_LIBRARIES} src/main_KITTI.cpp)
-#target_link_libraries(main_KITTI ${catkin_LIBRARIES} ${OpenCV_LIBS} loam ${PCL_LIBRARIES} ${CERES_LIBRARIES})
+add_executable(main_KITTI src/main_KITTI.cpp)
+target_link_libraries(main_KITTI ${OpenCV_LIBS} loam ${CERES_LIBRARIES})
 
-#rosbuild_add_executable(main_testICP ${catkin_LIBRARIES} src/main_testICP.cpp)
-#target_link_libraries(main_testICP ${catkin_LIBRARIES} ${OpenCV_LIBS} loam ${PCL_LIBRARIES} ${CERES_LIBRARIES})
+add_executable(main_testICP src/main_testICP.cpp)
+target_link_libraries(main_testICP ${catkin_LIBRARIES} ${OpenCV_LIBS} loam ${CERES_LIBRARIES})
 
-#rosbuild_add_executable(main_pcl_icp ${catkin_LIBRARIES} src/main_pcl_icp.cpp)
-#target_link_libraries(main_pcl_icp ${catkin_LIBRARIES} ${OpenCV_LIBS} loam ${PCL_LIBRARIES} ${CERES_LIBRARIES})
+add_executable(main_pcl_icp src/main_pcl_icp.cpp)
+target_link_libraries(main_pcl_icp ${catkin_LIBRARIES} ${OpenCV_LIBS} loam ${CERES_LIBRARIES})
 
-#rosbuild_add_executable(main_ceres ${catkin_LIBRARIES} src/main_ceres.cpp)
-#target_link_libraries(main_ceres ${catkin_LIBRARIES} ${OpenCV_LIBS} loam ${PCL_LIBRARIES} ${CERES_LIBRARIES})
+add_executable(main_ceres src/main_ceres.cpp)
+target_link_libraries(main_ceres ${catkin_LIBRARIES} ${OpenCV_LIBS} loam ${CERES_LIBRARIES})
 
-rosbuild_add_executable(main_openloam ${catkin_LIBRARIES} src/main_openloams.cpp)
-target_link_libraries(main_openloam ${catkin_LIBRARIES} ${OpenCV_LIBS} loam ${PCL_LIBRARIES} ${CERES_LIBRARIES})
+# add_executable(main_openloam src/main_openloam.cpp)
+# target_link_libraries(main_openloam ${catkin_LIBRARIES} ${OpenCV_LIBS} loam ${CERES_LIBRARIES})
 
-#rosbuild_add_executable(main_eval src/util/evaluate_odometry.cpp)
-#target_link_libraries(main_eval loam ${PCL_LIBRARIES} ${OpenCV_LIBRARIES})
+add_executable(main_eval src/util/evaluate_odometry.cpp)
+target_link_libraries(main_eval loam ${OpenCV_LIBRARIES})
