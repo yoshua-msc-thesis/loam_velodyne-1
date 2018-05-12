@@ -80,8 +80,8 @@ set(loam_SOURCE_FILES
 )
 
 set(util_SOURCE_FILES
-  src/KITTI_util/KITTI.cpp
-  src/KITTI_util/toMATLAB.cpp
+  src/KITTI_utils/KITTI.cpp
+  src/KITTI_utils/toMATLAB.cpp
   src/util/matrix.cpp
 )
 set(SOURCE_FILES
