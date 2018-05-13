@@ -17,9 +17,9 @@
 #include "loam/scanRegistration.h"
 #include "loam/laserOdometry.h"
 
-#include "KITTI_util/KITTI.h"
+#include "KITTI_utils/KITTI.h"
 
-#include "KITTI_util/toMATLAB.h"
+#include "KITTI_utils/toMATLAB.h"
 
 struct data
 {
