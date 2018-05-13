@@ -24,7 +24,7 @@
 #include <Eigen/Geometry>
 #include <Eigen/Eigenvalues>
 
-#include "../KITTI_util/toMATLAB.h"
+#include "../KITTI_utils/toMATLAB.h"
 #include "icp.h"
 
 
